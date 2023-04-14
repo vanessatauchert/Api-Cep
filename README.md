@@ -65,5 +65,5 @@ execução será apresentada a cobertura dos testes.
 
 # Autora
 
-| [<img src="https://avatars.github.ibm.com/u/416499" width=115><br><sub>Vanessa Oliveira</sub>](https://github.ibm.com/Van-Oliveira) |
+| [<img src="https://avatars.githubusercontent.com/u/60265204?v=4" width=115><br><sub>Vanessa Oliveira</sub>](https://github.ibm.com/Van-Oliveira) |
 | :---: |
