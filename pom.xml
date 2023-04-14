@@ -47,6 +47,11 @@
 			<version>1.6.14</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -73,6 +78,19 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.4</version>
+				<configuration>
+					<excludes>
+						<exclude>com/aplicacao/ibm/dto/*.class</exclude>
+
+					</excludes>
+				</configuration>
+
 			</plugin>
 		</plugins>
 	</build>
