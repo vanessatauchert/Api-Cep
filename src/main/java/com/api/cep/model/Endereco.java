@@ -1,12 +1,13 @@
 package com.api.cep.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Endereco {
 
     private String cep;
