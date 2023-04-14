@@ -4,6 +4,7 @@ import com.api.cep.dto.Cep;
 import com.api.cep.dto.EnderecoDTO;
 import com.api.cep.exceptions.EnderecoNaoEncontradoException;
 import com.api.cep.model.Endereco;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ public class EnderecoController {
     private RestTemplate restTemplate;
 
     @PostMapping("/consulta-endereco")
+    @Operation(summary = "Consulta o Endereço e valor do frete pelo Cep digitado")
     public ResponseEntity<EnderecoDTO> consultaEndereco(@RequestBody @Valid Cep cep){
         String url = "https://viacep.com.br/ws/" + cep.getCep() + "/json";
         Endereco endereco = restTemplate.getForObject(url, Endereco.class);
