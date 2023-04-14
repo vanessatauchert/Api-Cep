@@ -51,6 +51,10 @@ A collection dos endpoints no `Insomnia` pode ser encontrada para download na pa
 
 ## Testes:
 
+Para rodar os testes você pode digitar o comando `mvn test`
+
+Também é possível testar cada teste diretamente nas classes de testes no caminho `src\main\test`
+
 Para verificar a cobertura dos testes, basta clicar com o botão direito sobre o pacote principal da pasta teste, 
 selecionar `Modify Run Configuration` em `Code Coverage` selecione o `JaCoCo` clique em `Apply` e `OK`
 
