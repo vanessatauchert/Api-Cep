@@ -38,4 +38,8 @@ public class EnderecoController {
 
         return ResponseEntity.ok(enderecoDTO);
     }
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 }

@@ -1,6 +1,7 @@
 package com.api.cep.controller;
 
 
+import com.api.cep.ExcludeFromJacocoGeneratedReport;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.Collections;
-
+@ExcludeFromJacocoGeneratedReport
 @Configuration
 @OpenAPIDefinition
 public class SwaggerConfig {
