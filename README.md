@@ -61,7 +61,7 @@ execução será apresentada a cobertura dos testes.
 
 ## Desenvolvido com:<br>
 
-- ``Java 11``- ``SpringBoot 2.7.10``- ``Intellij``- ``Maven 3``- ``RestTemplate``- ``JUnit5``- - ``Jacoco````Insomnia``- ``Git``- ``GitHub``
+- ``Java 11``- ``SpringBoot 2.7.10``- ``Intellij``- ``Maven 3``- ``RestTemplate``- ``JUnit5``-  ``Jacoco``-``Insomnia``- ``Git``- ``GitHub``
 
 # Autora
 
