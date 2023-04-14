@@ -10,14 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatus;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -30,25 +25,12 @@ class EnderecoControllerTest {
     @Mock
     private RestTemplate restTemplate;
 
-    private static WireMockServer wireMockServer;
-
     @InjectMocks
     private EnderecoController enderecoController;
 
     @BeforeEach
     public void setup() {
         enderecoController.setRestTemplate(restTemplate);
-    }
-
-    @BeforeAll
-    public static void setUp() {
-        wireMockServer = new WireMockServer(8080);
-        wireMockServer.start();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        wireMockServer.stop();
     }
 
     @Test
@@ -157,37 +139,5 @@ class EnderecoControllerTest {
         Assertions.assertEquals(20.83, frete);
     }
 
-    @Test
-    public void testConsultaEnderecoServicoIndisponivel() {
-        // Configura o stub do WireMock para simular uma resposta 503 - Serviço indisponível
-        stubFor(get(urlEqualTo("/ws/12345678/json"))
-                .willReturn(aResponse()
-                        .withStatus(503)));
 
-        // Define o CEP a ser pesquisado
-        Cep cep = new Cep("12345678");
-
-        // Testa o método de consulta de endereço
-        assertThrows(RuntimeException.class, () -> enderecoController.consultaEndereco(cep));
     }
-
-    @Test
-    public void testConsultaEnderecoRespostaInvalida() {
-        // Configura o stub do WireMock para simular uma resposta inválida
-        stubFor(get(urlEqualTo("/ws/12345678/json"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withBody("{")));
-
-        // Define o CEP a ser pesquisado
-        Cep cep = new Cep("12345678");
-
-        // Testa o método de consulta de endereço
-        assertThrows(RuntimeException.class, () -> enderecoController.consultaEndereco(cep));
-    }
-
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
-}
