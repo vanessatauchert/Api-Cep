@@ -4,19 +4,18 @@ import com.api.cep.dto.Cep;
 import com.api.cep.dto.EnderecoDTO;
 import com.api.cep.exceptions.EnderecoNaoEncontradoException;
 import com.api.cep.model.Endereco;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.http.HttpStatus;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -26,59 +25,119 @@ class EnderecoControllerTest {
     @Mock
     private RestTemplate restTemplate;
 
+    @InjectMocks
+    private EnderecoController enderecoController;
+
     @BeforeEach
-    public void setUp() {
-        restTemplate = Mockito.mock(RestTemplate.class);
+    public void setup() {
+        enderecoController.setRestTemplate(restTemplate);
     }
 
     @Test
-    void testConsultaEnderecoValido() {
-        // cria um objeto Endereco
+    @DisplayName("Deve retornar o endereço e o valor do frete")
+    public void consultaEnderecoDeveRetornarEnderecoEFrete() {
+        Cep cep = new Cep("12345678");
         Endereco endereco = new Endereco();
-        endereco.setCep("12345-678");
-        endereco.setLogradouro("Rua das Flores");
-        endereco.setComplemento("Apto 123");
-        endereco.setBairro("Centro");
+        endereco.setCep(cep.getCep());
+        endereco.setLogradouro("Rua dos Testes");
+        endereco.setBairro("Teste");
         endereco.setLocalidade("São Paulo");
         endereco.setUf("SP");
 
-        // define o comportamento do mock do RestTemplate
-        when(restTemplate.getForObject("https://viacep.com.br/ws/12345-678/json", Endereco.class))
+        EnderecoDTO enderecoDTO = new EnderecoDTO(endereco);
+        Double frete = enderecoDTO.calcularFrete();
+        enderecoDTO.setFrete(frete);
+
+        when(restTemplate.getForObject("https://viacep.com.br/ws/" + cep.getCep() + "/json", Endereco.class))
                 .thenReturn(endereco);
 
-        // chama o método consultaEndereco() do controller
-        EnderecoController controller = new EnderecoController();
-        controller.setRestTemplate(restTemplate);
-        Cep cep = new Cep();
-        cep.setCep("12345-678");
-        ResponseEntity<EnderecoDTO> response = controller.consultaEndereco(cep);
-
-        // verifica se o retorno é o esperado
-        assertEquals("12345-678", response.getBody().getCep());
-        assertEquals("Rua das Flores", response.getBody().getRua());
-        assertEquals("Apto 123", response.getBody().getComplemento());
-        assertEquals("Centro", response.getBody().getBairro());
-        assertEquals("São Paulo", response.getBody().getCidade());
-        assertEquals("SP", response.getBody().getEstado());
+        ResponseEntity<EnderecoDTO> response = enderecoController.consultaEndereco(cep);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(enderecoDTO);
     }
 
     @Test
-    void testCepNaoEncontrado(){
-        // cria um objeto Cep
-        Cep cep = new Cep();
-        cep.setCep("000000-000");
+    @DisplayName("Deve retornar erro para CEP inválido")
+    public void consultaEnderecoDeveRetornarErroParaCEPInvalido() {
+        Cep cep = new Cep("00000000");
 
-        // define o comportamento do mock do RestTemplate para lançar uma exceção
-        when(restTemplate.getForObject("https://viacep.com.br/ws/000000-000/json", Endereco.class))
-                .thenThrow(new EnderecoNaoEncontradoException("Serviço indisponível"));
-
-        // chama o método consultaEndereco() do controller
-        EnderecoController controller = new EnderecoController();
-        controller.setRestTemplate(restTemplate);
-
-        // verifica se o método lança uma exceção EnderecoServicoIndisponivelException
         assertThrows(EnderecoNaoEncontradoException.class, () -> {
-            controller.consultaEndereco(cep);
+            enderecoController.consultaEndereco(cep);
         });
     }
-}
+
+    @Test
+    @DisplayName("Deve retornar erro para endereço não encontrado")
+    public void consultaEnderecoDeveRetornarErroParaEnderecoNaoEncontrado() {
+        Cep cep = new Cep("12345678");
+
+        when(restTemplate.getForObject("https://viacep.com.br/ws/" + cep.getCep() + "/json", Endereco.class))
+                .thenReturn(null);
+
+        assertThrows(EnderecoNaoEncontradoException.class, () -> {
+            enderecoController.consultaEndereco(cep);
+        });
+    }
+
+    @Test
+    @DisplayName("Deve calcular o frete corretamente para o estado de DF")
+    public void deveCalcularFreteParaEstadoDeDF() {
+        Endereco endereco = new Endereco();
+        endereco.setUf("DF");
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO(endereco);
+        Double frete = enderecoDTO.calcularFrete();
+
+        Assertions.assertEquals(12.50, frete);
+    }
+
+    @Test
+    @DisplayName("Deve calcular o frete corretamente para o estado de BA")
+    public void deveCalcularFreteParaEstadoDeBA() {
+        Endereco endereco = new Endereco();
+        endereco.setUf("BA");
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO(endereco);
+        Double frete = enderecoDTO.calcularFrete();
+
+        Assertions.assertEquals(15.98, frete);
+    }
+
+    @Test
+    @DisplayName("Deve calcular o frete corretamente para o estado de SP")
+    public void deveCalcularFreteParaEstadoDeSP() {
+        Endereco endereco = new Endereco();
+        endereco.setUf("SP");
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO(endereco);
+        Double frete = enderecoDTO.calcularFrete();
+
+        Assertions.assertEquals(7.85, frete);
+    }
+
+    @Test
+    @DisplayName("Deve calcular o frete corretamente para o estado de PR")
+    public void deveCalcularFreteParaEstadoDePR() {
+        Endereco endereco = new Endereco();
+        endereco.setUf("PR");
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO(endereco);
+        Double frete = enderecoDTO.calcularFrete();
+
+        Assertions.assertEquals(17.30, frete);
+    }
+
+    @Test
+    @DisplayName("Deve calcular o frete corretamente para o estado de RO")
+    public void deveCalcularFreteParaEstadoDeRO() {
+        Endereco endereco = new Endereco();
+        endereco.setUf("RO");
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO(endereco);
+        Double frete = enderecoDTO.calcularFrete();
+
+        Assertions.assertEquals(20.83, frete);
+    }
+
+
+    }
