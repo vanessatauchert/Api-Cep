@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@ExcludeFromJacocoGeneratedReport
 public class EnderecoDTO {
 
     private String cep;
