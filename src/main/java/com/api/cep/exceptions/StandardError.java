@@ -1,5 +1,6 @@
 package com.api.cep.exceptions;
 
+import com.api.cep.ExcludeFromJacocoGeneratedReport;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@ExcludeFromJacocoGeneratedReport
 public class StandardError implements Serializable {
     private static final long serialVersionUID = 1L;
 

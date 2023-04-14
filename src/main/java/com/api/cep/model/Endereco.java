@@ -1,5 +1,6 @@
 package com.api.cep.model;
 
+import com.api.cep.ExcludeFromJacocoGeneratedReport;
 import lombok.*;
 
 @Getter
@@ -8,6 +9,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ExcludeFromJacocoGeneratedReport
 public class Endereco {
 
     private String cep;

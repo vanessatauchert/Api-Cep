@@ -1,11 +1,17 @@
 package com.api.cep.dto;
 
+import com.api.cep.ExcludeFromJacocoGeneratedReport;
 import com.api.cep.model.Endereco;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
+@Getter
+@Setter
+@ExcludeFromJacocoGeneratedReport
 public class EnderecoDTO {
 
     private String cep;

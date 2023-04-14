@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
+@ExcludeFromJacocoGeneratedReport
 public class ApIviaCepApplication {
 
 	public static void main(String[] args) {
